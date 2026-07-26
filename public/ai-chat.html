@@ -38,6 +38,7 @@
             border-radius: 15px;
             font-size: 14px;
             line-height: 1.4;
+            word-wrap: break-word;
         }
         .user-message {
             background-color: #dcf8c6;
@@ -84,7 +85,7 @@
 
     <div class="chat-container" id="chatContainer">
         <div class="message ai-message">
-            Salom! Men sizning shaxsiy AI Tutor'ingizman. Menga xato yozilgan inglizcha gapingizni, matningizni tashlang yoki Speaking, Writing, Reading, Grammar hamda Native Culture bo'yicha istalgan savolingizni bering. Birga mukammal o'rganamiz! 🚀
+            Salom! Men sizning shaxsiy AI Tutor'ingizman. Menga istalgan savolingizni bering, ingliz tili bo'yicha erkin suhbat quramiz! 🚀
         </div>
     </div>
 
@@ -104,6 +105,7 @@
 
             if (!text) return;
 
+            // Foydalanuvchi xabarini chiqarish
             const userMsg = document.createElement('div');
             userMsg.className = 'message user-message';
             userMsg.textContent = text;
@@ -112,9 +114,10 @@
             input.value = '';
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
+            // Kutish jarayoni
             const loadingMsg = document.createElement('div');
             loadingMsg.className = 'message ai-message';
-            loadingMsg.textContent = "Anti-Kalaka AI o'ylayapti... ⏳";
+            loadingMsg.textContent = "AI yozmoqda... ⏳";
             chatContainer.appendChild(loadingMsg);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
@@ -128,9 +131,10 @@
                 const data = await response.json();
                 chatContainer.removeChild(loadingMsg);
 
+                // AI javobini hech qanday qo'shimcha shablonsiz to'g'ridan-to'g'ri chiqarish
                 const aiMsg = document.createElement('div');
                 aiMsg.className = 'message ai-message';
-                aiMsg.innerHTML = data.reply.replace(/\n/g, '<br>');
+                aiMsg.innerHTML = (data.reply || "Javob kelmadi.").replace(/\n/g, '<br>');
                 chatContainer.appendChild(aiMsg);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
