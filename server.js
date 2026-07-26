@@ -67,7 +67,12 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-bot.launch();
+// Botni xavfsiz ishga tushirish (server qulab tushmasligi uchun)
+bot.launch().then(() => {
+    console.log("Telegram bot muvaffaqiyatli ishga tushdi!");
+}).catch(err => {
+    console.error("Botni ishga tushirishda xatolik (lekin server ishlayveradi):", err);
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
