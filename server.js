@@ -44,27 +44,19 @@ app.post('/api/chat', async (req, res) => {
         });
 
         const data = await geminiResponse.json();
-        console.log("Gemini javobi:", JSON.stringify(data)); // Render logida ko'rinadi
 
-        // Xavfsiz tekshirib olish
         if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
             const replyText = data.candidates[0].content.parts[0].text;
             res.json({ reply: replyText });
         } else if (data.error) {
             res.status(500).json({ reply: "Gemini xatosi: " + data.error.message });
         } else {
-            res.status(500).json({ reply: "Javob formati xato keldi: " + JSON.stringify(data) });
+            res.status(500).json({ reply: "Javob formati xato keldi." });
         }
 
     } catch (error) {
         console.error("Server xatosi:", error);
         res.status(500).json({ reply: "Server xatosi: " + error.message });
-    }
-});
-
-    } catch (error) {
-        console.error("Gemini xatosi:", error);
-        res.status(500).json({ reply: "Gemini xatosi: " + error.message });
     }
 });
 
@@ -77,4 +69,4 @@ bot.launch().then(() => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server ishlayapti: ${PORT}`);
-});
+});s
