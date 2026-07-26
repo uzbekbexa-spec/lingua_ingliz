@@ -1,7 +1,6 @@
 const { Telegraf, Markup } = require('telegraf');
 const express = require('express');
 const path = require('path');
-const { GoogleGenAI } = require('@google/genai');
 
 const BOT_TOKEN = '8759405828:AAF4xzXch8GzFRJ5pbAlOyzgxM_5yxN-oKg';
 const bot = new Telegraf(BOT_TOKEN);
@@ -9,9 +8,6 @@ const app = express();
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Google Gemini ni sozlash
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 bot.start((ctx) => {
     ctx.reply(
@@ -24,26 +20,37 @@ bot.start((ctx) => {
 
 app.post('/api/chat', async (req, res) => {
     const userMessage = req.body.message;
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
     if (!userMessage) {
         return res.status(400).json({ reply: "Iltimos, xabar yozing!" });
     }
 
     try {
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: [
-                {
-                    role: 'user',
-                    parts: [
-                        { text: "Siz samimiy va tajribali ingliz tili o'qituvchisisiz. Foydalanuvchi nima yozsa, xuddi ChatGPT kabi erkin, qisqa va tushunarli qilib javob bering. Hech qanday uzun qoliplar yoki zerikarli shablonlar ishlatmang. Foydalanuvchi xabari: " + userMessage }
-                    ]
-                }
-            ]
+        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        parts: [
+                            { text: "Siz samimiy va tajribali ingliz tili o'qituvchisisiz. Foydalanuvchi nima yozsa, xuddi ChatGPT kabi erkin, qisqa va tushunarli qilib javob bering. Hech qanday uzun qoliplar yoki zerikarli shablonlar ishlatmang. Foydalanuvchi xabari: " + userMessage }
+                        ]
+                    }
+                ]
+            })
         });
 
-        const replyText = response.text;
-        res.json({ reply: replyText });
+        const data = await geminiResponse.json();
+
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+            const replyText = data.candidates[0].content.parts[0].text;
+            res.json({ reply: replyText });
+        } else {
+            res.status(500).json({ reply: "Gemini javob qaytarmadi." });
+        }
 
     } catch (error) {
         console.error("Gemini xatosi:", error);
