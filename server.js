@@ -18,7 +18,6 @@ bot.start((ctx) => {
     );
 });
 
-// DeepSeek API kalitini Render muhitidan o'qiymiz
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 
 app.post('/api/chat', async (req, res) => {
@@ -29,7 +28,6 @@ app.post('/api/chat', async (req, res) => {
     }
 
     try {
-        // Endi qolip emas, to'g'ridan-to'g'ri DeepSeek API ishlaydi!
         const aiResponse = await fetch('https://api.deepseek.com/chat/completions', {
             method: 'POST',
             headers: {
@@ -62,16 +60,15 @@ app.post('/api/chat', async (req, res) => {
         }
 
     } catch (error) {
-        console.error("DeepSeek to'liq xatosi:", error);
-        // Aniq xatoni brauzerga ham chiqaramiz, shunda darhol bilib olamiz
+        console.error("DeepSeek xatosi:", error);
         res.status(500).json({ reply: "DeepSeek xatosi: " + error.message });
     }
+});
 
-// Botni xavfsiz ishga tushirish (server qulab tushmasligi uchun)
 bot.launch().then(() => {
     console.log("Telegram bot muvaffaqiyatli ishga tushdi!");
 }).catch(err => {
-    console.error("Botni ishga tushirishda xatolik (lekin server ishlayveradi):", err);
+    console.error("Botni ishga tushirishda xatolik:", err);
 });
 
 const PORT = process.env.PORT || 3000;
