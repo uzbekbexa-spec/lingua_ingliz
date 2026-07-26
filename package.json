@@ -6,7 +6,6 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "@google/genai": "latest",
     "express": "^4.19.2",
     "telegraf": "^4.16.3"
   }
