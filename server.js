@@ -3,8 +3,7 @@ const express = require('express');
 const path = require('path');
 
 const BOT_TOKEN = '8759405828:AAF4xzXch8GzFRJ5pbAlOyzgxM_5yxN-oKg';
-// Google AI Studio'dan olgan kalitingizni mana shu yerga qo'shtirnoq ichiga yozib qo'ying:
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSy...o'sha_kalitni_shu_yerga_yozing';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const bot = new Telegraf(BOT_TOKEN);
 const app = express();
