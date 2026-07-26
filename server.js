@@ -44,13 +44,23 @@ app.post('/api/chat', async (req, res) => {
         });
 
         const data = await geminiResponse.json();
+        console.log("Gemini javobi:", JSON.stringify(data)); // Render logida ko'rinadi
 
-        if (data.candidates && data.candidates[0].content.parts[0].text) {
+        // Xavfsiz tekshirib olish
+        if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
             const replyText = data.candidates[0].content.parts[0].text;
             res.json({ reply: replyText });
+        } else if (data.error) {
+            res.status(500).json({ reply: "Gemini xatosi: " + data.error.message });
         } else {
-            res.status(500).json({ reply: "Gemini javob qaytarmadi." });
+            res.status(500).json({ reply: "Javob formati xato keldi: " + JSON.stringify(data) });
         }
+
+    } catch (error) {
+        console.error("Server xatosi:", error);
+        res.status(500).json({ reply: "Server xatosi: " + error.message });
+    }
+});
 
     } catch (error) {
         console.error("Gemini xatosi:", error);
