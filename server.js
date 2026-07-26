@@ -62,10 +62,10 @@ app.post('/api/chat', async (req, res) => {
         }
 
     } catch (error) {
-        console.error("DeepSeek xatosi:", error);
-        res.status(500).json({ reply: "Serverda ulanish xatosi yuz berdi." });
+        console.error("DeepSeek to'liq xatosi:", error);
+        // Aniq xatoni brauzerga ham chiqaramiz, shunda darhol bilib olamiz
+        res.status(500).json({ reply: "DeepSeek xatosi: " + error.message });
     }
-});
 
 // Botni xavfsiz ishga tushirish (server qulab tushmasligi uchun)
 bot.launch().then(() => {
