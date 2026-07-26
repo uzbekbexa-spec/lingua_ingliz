@@ -18,7 +18,6 @@ bot.start((ctx) => {
     );
 });
 
-// DeepSeek API kalit Render muhitidan o'qiladi
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 
 app.post('/api/chat', async (req, res) => {
@@ -40,7 +39,7 @@ app.post('/api/chat', async (req, res) => {
                 messages: [
                     {
                         role: "system",
-                        content: "Siz o'ta samimiy, jonli, do'stona va tajribali ingliz tili o'qituvchisisiz ('Anti-Kalaka AI'). O'zbek tilida xuddi ChatGPT yoki Gemini kabi erkin, tabiiy va qiziqarli muloqot qiling. Hech qanday zerikarli uzun qoliplar, shablonlar yoki 'Sizning xabaringiz qabul qilindi' degan robotcha gaplar ishlatmang! Foydalanuvchi nima desa, uning gapiga mos ravishda qisqa, tushunarli va jonli javob qaytaring. Ingliz tilini o'rgatishda yordam bering, xatosi bo'lsa yumshoq qilib to'g'rilang va suhbatni savol berib davom ettiring."
+                        content: "Siz oddiy, samimiy va jonli suhbatdosh o'qituvchisiz. Foydalanuvchi nima yozsa, xuddi ChatGPT kabi erkin va qisqa qilib javob bering. Hech qanday shablon, qolip yoki 'Sizning xabaringiz qabul qilindi' degan gaplarni yozmang. Faqat tirik odam kabi tabiiy muloqot qiling."
                     },
                     {
                         role: "user",
