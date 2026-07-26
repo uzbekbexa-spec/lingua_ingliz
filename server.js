@@ -3,6 +3,9 @@ const express = require('express');
 const path = require('path');
 
 const BOT_TOKEN = '8759405828:AAF4xzXch8GzFRJ5pbAlOyzgxM_5yxN-oKg';
+// Google AI Studio'dan olgan kalitingizni mana shu yerga qo'shtirnoq ichiga yozib qo'ying:
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSy...o'sha_kalitni_shu_yerga_yozing';
+
 const bot = new Telegraf(BOT_TOKEN);
 const app = express();
 
@@ -20,7 +23,6 @@ bot.start((ctx) => {
 
 app.post('/api/chat', async (req, res) => {
     const userMessage = req.body.message;
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
     if (!userMessage) {
         return res.status(400).json({ reply: "Iltimos, xabar yozing!" });
@@ -69,4 +71,4 @@ bot.launch().then(() => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server ishlayapti: ${PORT}`);
-});s
+});
