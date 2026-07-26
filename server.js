@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 
 const BOT_TOKEN = '8759405828:AAF4xzXch8GzFRJ5pbAlOyzgxM_5yxN-oKg';
-const OPENAI_API_KEY = "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";
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 const bot = new Telegraf(BOT_TOKEN);
 const app = express();
