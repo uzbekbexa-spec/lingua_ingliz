@@ -28,7 +28,7 @@ app.post('/api/chat', async (req, res) => {
     }
 
     try {
-        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-002:generateContent?key=${GEMINI_API_KEY}`, {
+        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ app.post('/api/chat', async (req, res) => {
 
         if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
             const replyText = data.candidates[0].content.parts[0].text;
-            res.json({ reply: replyText });
+            res.json({ reply: replyTest });
         } else if (data.error) {
             res.status(500).json({ reply: "Gemini xatosi: " + data.error.message });
         } else {
