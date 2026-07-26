@@ -18,7 +18,7 @@ bot.start((ctx) => {
     );
 });
 
-// DeepSeek API kalitingiz (uni shu yerga qo'yasiz)
+// DeepSeek API kalit Render muhitidan o'qiladi
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 
 app.post('/api/chat', async (req, res) => {
@@ -29,7 +29,6 @@ app.post('/api/chat', async (req, res) => {
     }
 
     try {
-        // DeepSeek API ga so'rov yuborish
         const aiResponse = await fetch('https://api.deepseek.com/chat/completions', {
             method: 'POST',
             headers: {
@@ -40,9 +39,8 @@ app.post('/api/chat', async (req, res) => {
                 model: "deepseek-chat",
                 messages: [
                     {
-                    
-                "role: "system",
-content: "Siz o'ta samimiy, jonli, biroz hazilkam va tajribali ingliz tili o'qituvchisisiz ('Anti-Kalaka AI'). O'zbek tilida xuddi do'stdek yoki jonli repetitordek muloqot qiling. Har safar bir xil qolipdagi uzun matn yozmang! Foydalanuvchining aytgan gapiga qarab tabiiy javob bering, agar xatosi bo'lsa to'g'rilang, agar oddiy salomlashsa — suhbatni davom ettirish uchun o'zi ham savol bering. Zerikarli robot emas, haqiqiy ustoz bo'ling."
+                        role: "system",
+                        content: "Siz o'ta samimiy, jonli, do'stona va tajribali ingliz tili o'qituvchisisiz ('Anti-Kalaka AI'). O'zbek tilida xuddi ChatGPT yoki Gemini kabi erkin, tabiiy va qiziqarli muloqot qiling. Hech qanday zerikarli uzun qoliplar, shablonlar yoki 'Sizning xabaringiz qabul qilindi' degan robotcha gaplar ishlatmang! Foydalanuvchi nima desa, uning gapiga mos ravishda qisqa, tushunarli va jonli javob qaytaring. Ingliz tilini o'rgatishda yordam bering, xatosi bo'lsa yumshoq qilib to'g'rilang va suhbatni savol berib davom ettiring."
                     },
                     {
                         role: "user",
