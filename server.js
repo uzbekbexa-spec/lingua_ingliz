@@ -33,7 +33,7 @@ app.post('/api/chat', async (req, res) => {
 
     try {
         // Rasmiy SDK orqali eng oxirgi barqaror modelni chaqiramiz
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
         
         const prompt = "Siz samimiy va tajribali ingliz tili o'qituvchisisiz. Foydalanuvchi nima yozsa, xuddi ChatGPT kabi erkin, qisqa va tushunarli qilib javob bering. Hech qanday uzun qoliplar yoki zerikarli shablonlar ishlatmang. Foydalanuvchi xabari: " + userMessage;
 
