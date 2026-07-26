@@ -1,6 +1,7 @@
 const { Telegraf, Markup } = require('telegraf');
 const express = require('express');
 const path = require('path');
+const { GoogleGenAI } = require('@google/genai');
 
 const BOT_TOKEN = '8759405828:AAF4xzXch8GzFRJ5pbAlOyzgxM_5yxN-oKg';
 const bot = new Telegraf(BOT_TOKEN);
@@ -8,6 +9,9 @@ const app = express();
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Google Gemini ni sozlash
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 bot.start((ctx) => {
     ctx.reply(
@@ -18,8 +22,6 @@ bot.start((ctx) => {
     );
 });
 
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-
 app.post('/api/chat', async (req, res) => {
     const userMessage = req.body.message;
 
@@ -28,40 +30,24 @@ app.post('/api/chat', async (req, res) => {
     }
 
     try {
-        const aiResponse = await fetch('https://api.deepseek.com/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: "deepseek-chat",
-                messages: [
-                    {
-                        role: "system",
-                        content: "Siz samimiy va tajribali ingliz tili o'qituvchisisiz. Foydalanuvchi nima yozsa, xuddi ChatGPT kabi erkin, qisqa va tushunarli qilib javob bering. Hech qanday uzun qoliplar yoki zerikarli shablonlar ishlatmang."
-                    },
-                    {
-                        role: "user",
-                        content: userMessage
-                    }
-                ],
-                stream: false
-            })
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: [
+                {
+                    role: 'user',
+                    parts: [
+                        { text: "Siz samimiy va tajribali ingliz tili o'qituvchisisiz. Foydalanuvchi nima yozsa, xuddi ChatGPT kabi erkin, qisqa va tushunarli qilib javob bering. Hech qanday uzun qoliplar yoki zerikarli shablonlar ishlatmang. Foydalanuvchi xabari: " + userMessage }
+                    ]
+                }
+            ]
         });
 
-        const data = await aiResponse.json();
-
-        if (data.choices && data.choices.length > 0) {
-            const replyText = data.choices[0].message.content;
-            res.json({ reply: replyText });
-        } else {
-            res.status(500).json({ reply: "AI javob berishda xatolik yuz berdi." });
-        }
+        const replyText = response.text;
+        res.json({ reply: replyText });
 
     } catch (error) {
-        console.error("DeepSeek xatosi:", error);
-        res.status(500).json({ reply: "DeepSeek xatosi: " + error.message });
+        console.error("Gemini xatosi:", error);
+        res.status(500).json({ reply: "Gemini xatosi: " + error.message });
     }
 });
 
