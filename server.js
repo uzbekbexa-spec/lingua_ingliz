@@ -1,9 +1,13 @@
 const { Telegraf, Markup } = require('telegraf');
 const express = require('express');
 const path = require('path');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const BOT_TOKEN = '8759405828:AAF4xzXch8GzFRJ5pbAlOyzgxM_5yxN-oKg';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
+// Rasmiy Google GenAI klienti
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 const bot = new Telegraf(BOT_TOKEN);
 const app = express();
@@ -28,31 +32,16 @@ app.post('/api/chat', async (req, res) => {
     }
 
     try {
-        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: [
-                    {
-                        parts: [
-                            { text: "Siz samimiy va tajribali ingliz tili o'qituvchisisiz. Foydalanuvchi nima yozsa, xuddi ChatGPT kabi erkin, qisqa va tushunarli qilib javob bering. Hech qanday uzun qoliplar yoki zerikarli shablonlar ishlatmang. Foydalanuvchi xabari: " + userMessage }
-                        ]
-                    }
-                ]
-            })
-        });
+        // Rasmiy SDK orqali eng oxirgi barqaror modelni chaqiramiz
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        
+        const prompt = "Siz samimiy va tajribali ingliz tili o'qituvchisisiz. Foydalanuvchi nima yozsa, xuddi ChatGPT kabi erkin, qisqa va tushunarli qilib javob bering. Hech qanday uzun qoliplar yoki zerikarli shablonlar ishlatmang. Foydalanuvchi xabari: " + userMessage;
 
-        const data = await geminiResponse.json();
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
 
-        if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-            const replyText = data.candidates[0].content.parts[0].text;
-            res.json({ reply: replyTest });
-        } else if (data.error) {
-            res.status(500).json({ reply: "Gemini xatosi: " + data.error.message });
-        } else {
-            res.status(500).json({ reply: "Javob formati xato keldi." });
-        }
+        res.json({ reply: text });
 
     } catch (error) {
         console.error("Server xatosi:", error);
