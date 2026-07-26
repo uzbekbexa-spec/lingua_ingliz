@@ -3,8 +3,7 @@ const express = require('express');
 const path = require('path');
 
 const BOT_TOKEN = '8759405828:AAF4xzXch8GzFRJ5pbAlOyzgxM_5yxN-oKg';
-// Google AI Studio'dan olgan kalitingizni mana shu yerga qo'shtirnoq ichiga yozib qo'ying:
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSy...o'sha_kalitni_shu_yerga_yozing';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 const bot = new Telegraf(BOT_TOKEN);
 const app = express();
@@ -29,29 +28,34 @@ app.post('/api/chat', async (req, res) => {
     }
 
     try {
-        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${OPENAI_API_KEY}`
             },
             body: JSON.stringify({
-                contents: [
+                model: "gpt-4o-mini",
+                messages: [
                     {
-                        parts: [
-                            { text: "Siz samimiy va tajribali ingliz tili o'qituvchisisiz. Foydalanuvchi nima yozsa, xuddi ChatGPT kabi erkin, qisqa va tushunarli qilib javob bering. Hech qanday uzun qoliplar yoki zerikarli shablonlar ishlatmang. Foydalanuvchi xabari: " + userMessage }
-                        ]
+                        role: "system",
+                        content: "Siz samimiy va tajribali ingliz tili o'qituvchisisiz. Foydalanuvchi nima yozsa, xuddi ChatGPT kabi erkin, qisqa va tushunarli qilib javob bering. Hech qanday uzun qoliplar yoki zerikarli shablonlar ishlatmang."
+                    },
+                    {
+                        role: "user",
+                        content: userMessage
                     }
                 ]
             })
         });
 
-        const data = await geminiResponse.json();
+        const data = await openaiResponse.json();
 
-        if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-            const replyText = data.candidates[0].content.parts[0].text;
+        if (data.choices && data.choices[0]?.message?.content) {
+            const replyText = data.choices[0].message.content;
             res.json({ reply: replyText });
         } else if (data.error) {
-            res.status(500).json({ reply: "Gemini xatosi: " + data.error.message });
+            res.status(500).json({ reply: "OpenAI xatosi: " + data.error.message });
         } else {
             res.status(500).json({ reply: "Javob formati xato keldi." });
         }
