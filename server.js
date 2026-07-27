@@ -29,3 +29,19 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server ishlayapti: ${PORT}`);
 });
+let users = new Set(); // Takrorlanmas ID'lar uchun
+
+bot.start((ctx) => {
+    users.add(ctx.from.id);
+    ctx.reply(
+        'Xush kelibsiz!',
+        Markup.inlineKeyboard([
+            [Markup.button.webApp('Mini Appni Ochish', 'https://lingua-ingliz.onrender.com')]
+        ])
+    );
+});
+
+// Statistika komandasi
+bot.command('stats', (ctx) => {
+    ctx.reply(`Jami obunachilar: ${users.size} ta foydalanuvchi`);
+});
